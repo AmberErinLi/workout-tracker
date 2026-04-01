@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Workout Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+  <h1 class="text-3xl font-bold mb-6 text-center">Workout Tracker</h1>
+
+  <!-- Add Workout -->
+  <h2 class="text-xl font-semibold mb-2">Add Workout</h2>
+  <form id="workoutForm" class="grid grid-cols-2 gap-3 mb-6">
+    <input class="border p-2 rounded" type="text" id="exercise" placeholder="Exercise" required />
+    <input class="border p-2 rounded" type="number" id="weight" placeholder="Weight" required />
+    <input class="border p-2 rounded" type="number" id="reps" placeholder="Reps" required />
+    <input class="border p-2 rounded" type="date" id="date" required />
+
+    <button class="col-span-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+      Add Workout
+    </button>
+  </form>
+
+  <!-- Chart Controls -->
+  <h2 class="text-xl font-semibold mb-2">Progress</h2>
+  <div class="flex gap-2 mb-4">
+    <select id="exerciseDropdown" class="border p-2 rounded"></select>
+    <button onclick="loadChart()" class="bg-green-500 text-white px-4 rounded hover:bg-green-600">
+      Show Progress
+    </button>
+  </div>
+
+  <canvas id="progressChart" class="mb-6"></canvas>
+
+  <!-- PR Chart -->
+  <h2 class="text-xl font-semibold mb-2">PR by Reps</h2>
+  <button onclick="loadPRChart()" class="bg-purple-500 text-white px-4 py-2 rounded mb-4 hover:bg-purple-600">
+    Show PRs
+  </button>
+  <canvas id="prChart" class="mb-6"></canvas>
+
+  <!-- Table -->
+  <h2 class="text-xl font-semibold mb-2">Workout History</h2>
+  <table class="w-full border">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="p-2">Exercise</th>
+        <th class="p-2">Weight</th>
+        <th class="p-2">Reps</th>
+        <th class="p-2">Date</th>
+      </tr>
+    </thead>
+    <tbody id="workoutTable"></tbody>
+  </table>
+
+  <h2 class="text-xl font-semibold mb-2">Next Workout</h2>
+  <button onclick="recommendWorkout()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+    Get Recommendation
+  </button>
+
+  <div id="recommendation"></div>
+
+  <script>
+    const API_URL = "http://localhost:8080/workouts";
+    let chart;
+
+    // Load workouts + populate table + dropdown
+    async function loadWorkouts() {
+      const response = await fetch(API_URL);
+      const workouts = await response.json();
+
+      const table = document.getElementById("workoutTable");
+      table.innerHTML = "";
+
+      const dropdown = document.getElementById("exerciseDropdown");
+      dropdown.innerHTML = "";
+
+      // Get unique exercises (case-insensitive)
+      const exerciseSet = new Set();
+
+      workouts.forEach(w => {
+        // Table
+        const row = `
+          <tr>
+            <td>${w.exercise}</td>
+            <td>${w.weight}</td>
+            <td>${w.reps}</td>
+            <td>${w.date}</td>
+          </tr>
+        `;
+        table.innerHTML += row;
+
+        exerciseSet.add(w.exercise.toLowerCase());
+      });
+
+      // Populate dropdown
+      exerciseSet.forEach(ex => {
+        const option = document.createElement("option");
+        option.value = ex;
+        option.textContent = ex;
+        dropdown.appendChild(option);
+      });
+    }
+
+    // Handle form submission
+    document.getElementById("workoutForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const workout = {
+        exercise: document.getElementById("exercise").value,
+        weight: parseFloat(document.getElementById("weight").value),
+        reps: parseInt(document.getElementById("reps").value),
+        date: document.getElementById("date").value
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(workout)
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save workout");
+        }
+
+        document.getElementById("workoutForm").reset();
+        loadWorkouts(); // refresh table + dropdown
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong.");
+      }
+    });
+
+    function linearRegression(x, y) {
+        const n = x.length;
+
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+
+        for (let i = 0; i < n; i++) {
+            sumX += x[i];
+            sumY += y[i];
+            sumXY += x[i] * y[i];
+            sumXX += x[i] * x[i];
+        }
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+
+        return { slope, intercept };
+    }
+
+    // Load chart with WEIGHT + REPS
+    async function loadChart() {
+        const selectedExercise = document.getElementById("exerciseDropdown").value;
+
+        const response = await fetch("http://localhost:8080/workouts");
+        const workouts = await response.json();
+
+        const filtered = workouts.filter(w =>
+            w.exercise.toLowerCase() === selectedExercise
+        );
+
+        if (filtered.length === 0) {
+            alert("No data found.");
+            return;
+        }
+
+        // Group by date → keep max weight
+        const maxPerDay = {};
+
+        filtered.forEach(w => {
+            const date = w.date;
+
+            if (!maxPerDay[date] || w.weight > maxPerDay[date].weight) {
+                maxPerDay[date] = {
+                    weight: w.weight,
+                    reps: w.reps
+                };
+            }
+        });
+
+        // Sort dates
+        const sortedDates = Object.keys(maxPerDay).sort((a, b) => new Date(a) - new Date(b));
+
+        const labels = sortedDates;
+
+        const weightData = [];
+        const repsData = [];
+        const oneRMData = [];
+
+        sortedDates.forEach(date => {
+            const w = maxPerDay[date].weight;
+            const r = maxPerDay[date].reps;
+
+            weightData.push(w);
+            repsData.push(r);
+
+            // 1RM calculation
+            const oneRM = w * (1 + r / 30);
+            oneRMData.push(parseFloat(oneRM.toFixed(2)));
+        });
+
+        // Create x values (0,1,2,...) for 1RM prediction
+        const xValues = oneRMData.map((_, i) => i);
+
+        // Train regression model
+        const { slope, intercept } = linearRegression(xValues, oneRMData);
+
+        // Predict future (add 5 extra points)
+        const futurePoints = 5;
+
+        // Start with nulls for existing data
+        const predictedData = new Array(oneRMData.length).fill(null);
+
+        // Add ONLY future predictions
+        for (let i = oneRMData.length; i < oneRMData.length + futurePoints; i++) {
+            predictedData.push(slope * i + intercept);
+        }
+
+        // Extend labels for future dates
+        const extendedLabels = [...labels];
+
+        for (let i = 1; i <= futurePoints; i++) {
+            extendedLabels.push("Next Session " + i);
+        }
+
+        const ctx = document.getElementById("progressChart").getContext("2d");
+
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: extendedLabels,
+                datasets: [
+                    {
+                        label: "Max Weight",
+                        data: weightData,
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: "Estimated 1RM",
+                        data: oneRMData,
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: "Reps at Max",
+                        data: repsData,
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: "Predicted 1RM",
+                        data: predictedData,
+                        borderDash: [5, 5], // dashed line = prediction
+                        borderWidth: 2,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    }
+
+    async function loadPRChart() {
+        const selectedExercise = document.getElementById("exerciseDropdown").value;
+
+        const response = await fetch("http://localhost:8080/workouts");
+        const workouts = await response.json();
+
+        const filtered = workouts.filter(w =>
+            w.exercise.toLowerCase() === selectedExercise
+        );
+
+        if (filtered.length === 0) {
+            alert("No data found.");
+            return;
+        }
+
+        // Group by reps → keep max weight
+        const prByReps = {};
+
+        filtered.forEach(w => {
+            const reps = w.reps;
+
+            if (!prByReps[reps] || w.weight > prByReps[reps]) {
+            prByReps[reps] = w.weight;
+            }
+        });
+
+        // Sort reps numerically
+        const sortedReps = Object.keys(prByReps)
+            .map(r => parseInt(r))
+            .sort((a, b) => a - b);
+
+        const labels = sortedReps;
+        const data = sortedReps.map(r => prByReps[r]);
+
+        const ctx = document.getElementById("prChart").getContext("2d");
+
+        if (window.prChart && typeof window.prChart.destroy === "function") {
+            window.prChart.destroy();
+        }
+
+        window.prChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "PR Weight",
+                        data: data,
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Reps"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Weight"
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async function recommendWorkout() {
+        const selectedExercise = document.getElementById("exerciseDropdown").value;
+
+        const response = await fetch("http://localhost:8080/workouts");
+        const workouts = await response.json();
+
+        const filtered = workouts.filter(w =>
+            w.exercise.toLowerCase() === selectedExercise
+        );
+
+        if (filtered.length === 0) {
+            alert("No data found.");
+            return;
+        }
+
+        // Sort by date
+        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const lastWorkout = filtered[filtered.length - 1];
+
+        // --- Find max recent weight (last ~5 workouts)
+        const recent = filtered.slice(-5);
+        let maxRecentWeight = Math.max(...recent.map(w => w.weight));
+
+        // --- Build 1RM data for trend
+        const oneRMData = recent.map(w =>
+            w.weight * (1 + w.reps / 30)
+        );
+
+        const xValues = oneRMData.map((_, i) => i);
+
+        // reuse your regression function
+        const { slope } = linearRegression(xValues, oneRMData);
+
+        // --- Decide progression
+        let recommendedWeight = maxRecentWeight;
+
+        if (slope > 0.5) {
+            recommendedWeight += 5; // progressing well
+        } else if (slope > 0) {
+            recommendedWeight += 2.5; // slow progress
+        } else {
+            recommendedWeight += 0; // plateau → maintain
+        }
+
+        // --- Round to nearest 5 lbs
+        recommendedWeight = Math.round(recommendedWeight / 5) * 5;
+
+        // --- Reps logic
+        let recommendedReps = lastWorkout.reps;
+
+        if (recommendedReps > 6) {
+            recommendedReps = 5;
+        } else if (recommendedReps < 3) {
+            recommendedReps = 3;
+        }
+
+        // --- Smarter date
+        const lastDate = new Date(lastWorkout.date);
+
+        if (recommendedWeight >= maxRecentWeight) {
+            lastDate.setDate(lastDate.getDate() + 2); // heavy → rest more
+        } else {
+            lastDate.setDate(lastDate.getDate() + 1);
+        }
+
+        const nextDate = lastDate.toISOString().split("T")[0];
+
+        // --- Output
+        document.getElementById("recommendation").innerHTML = `
+            <div class="bg-green-100 p-4 rounded mt-4">
+                <h3 class="font-bold text-lg mb-2">Next Workout Recommendation</h3>
+                <p><strong>Exercise:</strong> ${selectedExercise}</p>
+                <p><strong>Date:</strong> ${nextDate}</p>
+                <p><strong>Weight:</strong> ${recommendedWeight} lbs</p>
+                <p><strong>Reps:</strong> ${recommendedReps}</p>
+                <p class="text-sm text-gray-600 mt-2">
+                    Based on your recent performance and progress trend.
+                </p>
+            </div>
+        `;
+    }
+
+    // Initial load
+    loadWorkouts();
+  </script>
+  </div>
+</body>
+</html>
