@@ -90,3 +90,10 @@ src/
 ```bash
 cd backend
 ./mvnw spring-boot:run
+```
+Backend runs on:
+```
+http://localhost:8080
+```
+### 1. Run Frontend
+Open `frontend/index.html` using Live Server in VS Code
