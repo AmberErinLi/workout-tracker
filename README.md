@@ -97,3 +97,32 @@ http://localhost:8080
 ```
 ### 1. Run Frontend
 Open `frontend/index.html` using Live Server in VS Code
+
+---
+
+## 📊 Example Features
+- Track strength progression over time
+- Predict future performance using ML
+- Get personalized workout recommendations
+
+---
+
+## 💡 Future Improvements
+- Deploy app (AWS / Render / Vercel)
+- Add user authentication
+- Improve ML model (polynomial regression, more features)
+
+---
+
+## 🎯 Why This Project
+This project demonstrates:
+
+- Full-stack development skills
+- Data visualization
+- Machine learning fundamentals
+- Real-world problem solving
+
+---
+
+## 👤 Author
+Amber Li
