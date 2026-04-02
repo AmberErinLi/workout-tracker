@@ -52,32 +52,33 @@ A full-stack workout tracking application that allows users to log workouts, vis
 ## 📂 Project Structure
 ```text
 workout-tracker/
-├── frontend/ # HTML + JS frontend
-├── src/ # Sprint Boot API backend
-├── .gitignore
-├── README.md
-├── mvnw
-├── mvnw.cmd
-└── pom.xml
+├── frontend/              # Static frontend (HTML, JS, charts, UI logic)
+│   └── index.html         # Main user interface for logging workouts & viewing analytics
+├── backend/               # Spring Boot backend (REST API + business logic)
+├── .gitignore             # Specifies files/folders Git should ignore
+├── README.md              # Project documentation and overview
+├── mvnw                   # Maven wrapper (Linux/Mac) for running the project
+├── mvnw.cmd               # Maven wrapper (Windows)
+└── pom.xml                # Maven configuration (dependencies, build settings)
 ```
 <details>
-<summary><b>Click to view all files in /src</b></summary>
+<summary><b>Click to view all files in /backend</b></summary>
    
 ```text
-src/
+backend/
 ├── main/                         
 │   ├── java/com/example/workouttracker
 │   │   ├── controller
-│   │   │   └── WorkoutController.java
+│   │   │   └── WorkoutController.java      # REST API endpoints (handles HTTP requests)
 │   │   ├── model
-│   │   │   └── Workout.java
+│   │   │   └── Workout.java                # Data model (represents a workout entry)
 │   │   ├── repository
-│   │   │   └── WorkoutRepository.java
-│   │   └── WorkouttrackerApplication.java
+│   │   │   └── WorkoutRepository.java      # Database access layer (CRUD operations)
+│   │   └── WorkouttrackerApplication.java  # Main Spring Boot entry point
 │   └── resources
-│   │   └── application.properties
+│   │   └── application.properties          # App configuration (DB, port, settings)
 └── test/java/com/example/workouttracker
-│   └── WorkouttrackerApplicationTest.java
+│   └── WorkouttrackerApplicationTest.java  # Basic tests for application startup
 ```
 </details>
 
