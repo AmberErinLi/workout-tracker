@@ -86,24 +86,18 @@ backend/
 
 ## 🚀 Getting Started
 
-### 1. Run Backend
-
-```bash
-cd workouttracker
-```
-**Mac/Linux:**
-```bash
-./mvnw spring-boot:run
-```
-**Windows:**
-```bash
-mvnw.cmd spring-boot:run
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/AmberErinLi/simple-search-engine.git
+2. Open in Visual Studio Code.
+3. **Run Backend:**
+Run `WorkoutTrackerApplication.java`
 ```
 Backend runs on:
 ```
 http://localhost:8080
 ```
-### 1. Run Frontend
+4. **Run Frontend**
 Open `frontend/index.html` using Live Server in VS Code
 
 ---
