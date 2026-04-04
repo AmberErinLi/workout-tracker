@@ -92,7 +92,7 @@ backend/
 2. Open in Visual Studio Code.
 3. **Run Backend:**
 Run `WorkoutTrackerApplication.java`
-```
+
 Backend runs on:
 ```
 http://localhost:8080
