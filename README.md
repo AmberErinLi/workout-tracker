@@ -90,7 +90,14 @@ backend/
 
 ```bash
 cd backend
+```
+**Mac/Linux:**
+```bash
 ./mvnw spring-boot:run
+```
+**Windows:**
+```bash
+mvnw.cmd spring-boot:run
 ```
 Backend runs on:
 ```
