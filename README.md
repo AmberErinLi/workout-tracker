@@ -89,7 +89,7 @@ backend/
 ### 1. Run Backend
 
 ```bash
-cd backend
+cd workouttracker
 ```
 **Mac/Linux:**
 ```bash
