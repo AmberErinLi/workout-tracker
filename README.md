@@ -88,7 +88,7 @@ backend/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/AmberErinLi/simple-search-engine.git
+   git clone https://github.com/AmberErinLi/workout-tracker.git
 2. Open in Visual Studio Code.
 3. **Run Backend:**
 Run `WorkoutTrackerApplication.java`
