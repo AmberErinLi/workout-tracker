@@ -87,6 +87,13 @@ backend/
 
 ---
 
+## 📋 Prerequisites
+- Java 17+
+- VS Code (recommended)
+- Live Server extension for VS Code (used to run the frontend)
+
+---
+
 ## 🚀 Getting Started
 
 #### 1. Clone the repository:
