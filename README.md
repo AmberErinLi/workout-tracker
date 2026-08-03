@@ -50,16 +50,19 @@ A full-stack workout tracking application that allows users to log workouts, vis
 ---
 
 ## 📂 Project Structure
+The project is organized into separate frontend and backend components. The Spring Boot backend provides REST endpoints for managing workout data and performing analytics, while the frontend handles user interaction and data visualization.
 ```text
 workout-tracker/
-├── frontend/              # Static frontend (HTML, JS, charts, UI logic)
-│   └── index.html         # Main user interface for logging workouts & viewing analytics
-├── backend/               # Spring Boot backend (REST API + business logic)
-├── .gitignore             # Specifies files/folders Git should ignore
-├── README.md              # Project documentation and overview
-├── mvnw                   # Maven wrapper (Linux/Mac) for running the project
-├── mvnw.cmd               # Maven wrapper (Windows)
-└── pom.xml                # Maven configuration (dependencies, build settings)
+├── backend/
+│   ├── src/               # Spring Boot source code (REST API + business logic)
+│   ├── .mvn/              # Maven Wrapper configuration
+│   ├── mvnw               # Maven Wrapper (Linux/macOS)
+│   ├── mvnw.cmd           # Maven Wrapper (Windows)
+│   └── pom.xml            # Maven dependencies and build configuration
+├── frontend/
+│   └── index.html         # User interface for logging workouts and viewing analytics
+├── .gitignore             # Git ignore rules
+└── README.md              # Project documentation
 ```
 <details>
 <summary><b>Click to view all files in /backend</b></summary>
