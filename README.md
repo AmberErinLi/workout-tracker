@@ -110,6 +110,7 @@ cd backend
 ```
 Windows PowerShell users may need to run:
 ```bash
+cd backend
 .\mvnw.cmd spring-boot:run
 ```
 Backend runs on:
