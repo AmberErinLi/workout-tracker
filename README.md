@@ -94,7 +94,7 @@ backend/
    git clone https://github.com/AmberErinLi/workout-tracker.git
 2. Open in Visual Studio Code.
 3. **Run Backend:**
-Run `WorkoutTrackerApplication.java`
+Run `WorkouttrackerApplication.java`
 
 Backend runs on:
 ```
@@ -102,7 +102,7 @@ http://localhost:8080
 ```
 4. **Run Frontend**
 Open `frontend/index.html` using Live Server in VS Code
-
+5. Enter personal workout data
 ---
 
 ## 📊 Example Features
