@@ -1,4 +1,4 @@
-mvnw.cmd spring-boot:runpackage com.example.workouttracker;
+package com.example.workouttracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
