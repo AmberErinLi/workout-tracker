@@ -123,13 +123,6 @@ Enter workout data and explore progress tracking, analytics, and predictions.
 
 ---
 
-## 📊 Example Features
-- Track strength progression over time
-- Predict future performance using ML
-- Get personalized workout recommendations
-
----
-
 ## 💡 Future Improvements
 - Deploy app (AWS / Render / Vercel)
 - Add user authentication
