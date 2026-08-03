@@ -89,20 +89,31 @@ backend/
 
 ## 🚀 Getting Started
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/AmberErinLi/workout-tracker.git
-2. Open in Visual Studio Code.
-3. **Run Backend:**
-Run `WorkouttrackerApplication.java`
-
+#### 1. Clone the repository:
+```bash
+git clone https://github.com/AmberErinLi/workout-tracker.git
+```
+#### 2. Open the project in Visual Studio Code.
+Open the `workout-tracker` folder in VS Code.
+#### 3. Start the backend
+Run the Spring Boot application from the backend directory using Maven Wrapper:
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+Windows PowerShell users may need to run:
+```bash
+.\mvnw.cmd spring-boot:run
+```
 Backend runs on:
 ```
 http://localhost:8080
 ```
-4. **Run Frontend**
-Open `frontend/index.html` using Live Server in VS Code
-5. Enter personal workout data
+#### 4. Start the frontend
+Open `frontend/index.html` using the Live Server extension in VS Code.
+#### 5. Use the application
+Enter workout data and explore progress tracking, analytics, and predictions.
+
 ---
 
 ## 📊 Example Features
