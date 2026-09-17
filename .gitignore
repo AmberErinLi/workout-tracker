@@ -38,3 +38,6 @@ build/
 node_modules/
 dist/
 .env
+
+### H2 database files ###
+data/

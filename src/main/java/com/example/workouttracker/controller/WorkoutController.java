@@ -8,7 +8,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/workouts")
-@CrossOrigin(origins = "*")
 public class WorkoutController {
 
     private final WorkoutRepository repository;

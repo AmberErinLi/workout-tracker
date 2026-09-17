@@ -50,25 +50,22 @@ A full-stack workout tracking application that allows users to log workouts, vis
 ---
 
 ## 📂 Project Structure
-The project is organized into separate frontend and backend components. The Spring Boot backend provides REST endpoints for managing workout data and performing analytics, while the frontend handles user interaction and data visualization.
+The project is a single Spring Boot application that serves the REST API and hosts the frontend as a static resource, so everything runs from one process on one port.
 ```text
 workout-tracker/
-├── backend/
-│   ├── src/               # Spring Boot source code (REST API + business logic)
-│   ├── .mvn/              # Maven Wrapper configuration
-│   ├── mvnw               # Maven Wrapper (Linux/macOS)
-│   ├── mvnw.cmd           # Maven Wrapper (Windows)
-│   └── pom.xml            # Maven dependencies and build configuration
-├── frontend/
-│   └── index.html         # User interface for logging workouts and viewing analytics
-├── .gitignore             # Git ignore rules
-└── README.md              # Project documentation
+├── src/                    # Spring Boot source code (REST API + business logic)
+├── .mvn/                   # Maven Wrapper configuration
+├── mvnw                    # Maven Wrapper (Linux/macOS)
+├── mvnw.cmd                # Maven Wrapper (Windows)
+├── pom.xml                 # Maven dependencies and build configuration
+├── .gitignore              # Git ignore rules
+└── README.md               # Project documentation
 ```
 <details>
-<summary><b>Click to view all files in /backend</b></summary>
+<summary><b>Click to view all files in /src</b></summary>
    
 ```text
-backend/
+src/
 ├── main/                         
 │   ├── java/com/example/workouttracker
 │   │   ├── controller
@@ -79,7 +76,8 @@ backend/
 │   │   │   └── WorkoutRepository.java      # Database access layer (CRUD operations)
 │   │   └── WorkouttrackerApplication.java  # Main Spring Boot entry point
 │   └── resources
-│   │   └── application.properties          # App configuration (DB, port, settings)
+│   │   ├── application.properties          # App configuration (DB, port, settings)
+│   │   └── static/index.html               # Frontend UI, served directly by Spring Boot
 └── test/java/com/example/workouttracker
 │   └── WorkouttrackerApplicationTest.java  # Basic tests for application startup
 ```
@@ -89,8 +87,6 @@ backend/
 
 ## 📋 Prerequisites
 - Java 17+
-- VS Code (recommended)
-- Live Server extension for VS Code (used to run the frontend)
 
 ---
 
@@ -99,28 +95,23 @@ backend/
 #### 1. Clone the repository:
 ```bash
 git clone https://github.com/AmberErinLi/workout-tracker.git
+cd workout-tracker
 ```
-#### 2. Open the project in Visual Studio Code.
-Open the `workout-tracker` folder in VS Code.
-#### 3. Start the backend
-Run the Spring Boot application from the backend directory using Maven Wrapper:
+#### 2. Run the application
+Using Maven Wrapper:
 ```bash
-cd backend
 ./mvnw spring-boot:run
 ```
 Windows PowerShell users may need to run:
 ```bash
-cd backend
 .\mvnw.cmd spring-boot:run
 ```
-Backend runs on:
+#### 3. Use the application
+Open your browser to:
 ```
 http://localhost:8080
 ```
-#### 4. Start the frontend
-Open `frontend/index.html` using the Live Server extension in VS Code.
-#### 5. Use the application
-Enter workout data and explore progress tracking, analytics, and predictions.
+Enter workout data and explore progress tracking, analytics, and predictions. Your data is saved to a local file (`data/`) and persists between restarts.
 
 ---
 
