@@ -1,5 +1,6 @@
 package com.example.workouttracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -15,6 +16,11 @@ public class Workout {
     private int reps;
     private LocalDate date;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User owner;
+
     // Constructors
     public Workout() {}
 
@@ -27,6 +33,9 @@ public class Workout {
 
     // Getters and Setters
     public Long getId() { return id; }
+
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 
     public String getExercise() { return exercise; }
     public void setExercise(String exercise) { this.exercise = exercise; }

@@ -11,6 +11,31 @@
   <div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
   <h1 class="text-3xl font-bold mb-6 text-center">Workout Tracker</h1>
 
+  <!-- Auth -->
+  <div id="authSection" class="max-w-sm mx-auto mb-6">
+    <div id="authError" class="text-red-600 text-sm mb-2 hidden"></div>
+
+    <form id="loginForm" class="grid gap-3 mb-4">
+      <h2 class="text-xl font-semibold">Log In</h2>
+      <input class="border p-2 rounded" type="email" id="loginEmail" placeholder="Email" required />
+      <input class="border p-2 rounded" type="password" id="loginPassword" placeholder="Password" required />
+      <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Log In</button>
+    </form>
+
+    <form id="registerForm" class="grid gap-3">
+      <h2 class="text-xl font-semibold">Create Account</h2>
+      <input class="border p-2 rounded" type="email" id="registerEmail" placeholder="Email" required />
+      <input class="border p-2 rounded" type="password" id="registerPassword" placeholder="Password" required minlength="8" />
+      <button class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Sign Up</button>
+    </form>
+  </div>
+
+  <div id="appSection" class="hidden">
+  <div class="flex justify-between items-center mb-4">
+    <span id="userEmailDisplay" class="text-sm text-gray-600"></span>
+    <button id="logoutButton" class="text-sm bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">Log Out</button>
+  </div>
+
   <!-- Add Workout -->
   <h2 class="text-xl font-semibold mb-2">Add Workout</h2>
   <form id="workoutForm" class="grid grid-cols-2 gap-3 mb-6">
@@ -62,10 +87,97 @@
   </button>
 
   <div id="recommendation"></div>
+  </div>
 
   <script>
     const API_URL = "/workouts";
     let chart;
+
+    function showApp(email) {
+      document.getElementById("authSection").classList.add("hidden");
+      document.getElementById("appSection").classList.remove("hidden");
+      document.getElementById("userEmailDisplay").textContent = email;
+      loadWorkouts();
+    }
+
+    function showAuth() {
+      document.getElementById("appSection").classList.add("hidden");
+      document.getElementById("authSection").classList.remove("hidden");
+    }
+
+    function showAuthError(message) {
+      const el = document.getElementById("authError");
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    // Check whether a session already exists (e.g. on page refresh)
+    async function checkAuth() {
+      const response = await fetch("/me");
+      if (response.ok) {
+        const user = await response.json();
+        showApp(user.email);
+      } else {
+        showAuth();
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.getElementById("authError").classList.add("hidden");
+
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ username: email, password })
+      });
+
+      if (response.ok) {
+        showApp(email);
+      } else {
+        showAuthError("Invalid email or password.");
+      }
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.getElementById("authError").classList.add("hidden");
+
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
+      const response = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (response.ok) {
+        // Registration doesn't log the user in automatically; log in right after.
+        const loginResponse = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ username: email, password })
+        });
+
+        if (loginResponse.ok) {
+          showApp(email);
+        } else {
+          showAuthError("Account created. Please log in.");
+        }
+      } else {
+        const error = await response.json().catch(() => ({}));
+        showAuthError(error.error || "Could not create account.");
+      }
+    });
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      await fetch("/logout", { method: "POST" });
+      showAuth();
+    });
 
     // Load workouts + populate table + dropdown
     async function loadWorkouts() {
@@ -435,7 +547,7 @@
     }
 
     // Initial load
-    loadWorkouts();
+    checkAuth();
   </script>
   </div>
 </body>
