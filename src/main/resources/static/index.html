@@ -17,15 +17,15 @@
 
     <form id="loginForm" class="grid gap-3 mb-4">
       <h2 class="text-xl font-semibold">Log In</h2>
-      <input class="border p-2 rounded" type="email" id="loginEmail" placeholder="Email" required />
-      <input class="border p-2 rounded" type="password" id="loginPassword" placeholder="Password" required />
+      <input class="border p-2 rounded" type="email" id="loginEmail" placeholder="Email" autocomplete="email" required />
+      <input class="border p-2 rounded" type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
       <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Log In</button>
     </form>
 
     <form id="registerForm" class="grid gap-3">
       <h2 class="text-xl font-semibold">Create Account</h2>
-      <input class="border p-2 rounded" type="email" id="registerEmail" placeholder="Email" required />
-      <input class="border p-2 rounded" type="password" id="registerPassword" placeholder="Password" required minlength="8" />
+      <input class="border p-2 rounded" type="email" id="registerEmail" placeholder="Email" autocomplete="email" required />
+      <input class="border p-2 rounded" type="password" id="registerPassword" placeholder="Password" autocomplete="new-password" required minlength="8" />
       <button class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Sign Up</button>
     </form>
   </div>
@@ -103,6 +103,8 @@
     function showAuth() {
       document.getElementById("appSection").classList.add("hidden");
       document.getElementById("authSection").classList.remove("hidden");
+      document.getElementById("loginForm").reset();
+      document.getElementById("registerForm").reset();
     }
 
     function showAuthError(message) {
