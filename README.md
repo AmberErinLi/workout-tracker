@@ -155,7 +155,6 @@ SPRING_PROFILES_ACTIVE=prod DB_HOST=localhost DB_NAME=workouttracker DB_USERNAME
 
 ## 💡 Future Improvements
 - Deploy app (AWS / Render / Vercel)
-- Add CSRF protection for the session-based login flow
 - Improve ML model (polynomial regression, more features)
 
 ---
