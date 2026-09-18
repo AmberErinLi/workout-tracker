@@ -4,6 +4,13 @@ A full-stack workout tracking application that allows users to log workouts, vis
 
 ---
 
+## 🌐 Live Demo
+**[workout-tracker-zlro.onrender.com](https://workout-tracker-zlro.onrender.com)**
+
+Hosted on Render's free tier with a Neon Postgres database. The free tier spins down after periods of inactivity, so the first request after a while may take 30-60 seconds to wake up.
+
+---
+
 ## 🔥 Features
 
 ### 👤 User Accounts
@@ -63,6 +70,8 @@ workout-tracker/
 ├── mvnw                    # Maven Wrapper (Linux/macOS)
 ├── mvnw.cmd                # Maven Wrapper (Windows)
 ├── pom.xml                 # Maven dependencies and build configuration
+├── Dockerfile              # Container build used for deployment
+├── .dockerignore           # Files excluded from the Docker build context
 ├── docker-compose.yml      # Local Postgres instance, for testing the prod database config
 ├── .gitignore              # Git ignore rules
 └── README.md               # Project documentation
@@ -129,6 +138,8 @@ Create an account, log in, and explore progress tracking, analytics, and predict
 ---
 
 ## ☁️ Deploying to Production
+The live demo above runs as a Docker web service on [Render](https://render.com) (free tier) with a [Neon](https://neon.tech) Postgres database (free tier), auto-deploying from the `main` branch on every push.
+
 By default the app runs against a local H2 file, which isn't reliable for a deployed environment (many hosts don't guarantee a persistent disk). A `prod` Spring profile is included that connects to a real Postgres database instead.
 
 To use it, set these environment variables on your deploy host and activate the profile:
@@ -140,7 +151,7 @@ DB_NAME=<your-database-name>
 DB_USERNAME=<your-database-username>
 DB_PASSWORD=<your-database-password>
 ```
-Most hosts (Render, Railway, Fly.io, etc.) provide a managed Postgres add-on that gives you these values directly.
+Any managed Postgres provider works here (Neon, Render Postgres, Railway, Supabase, etc.) — just plug in its connection details.
 
 To test the `prod` config locally before deploying, start a local Postgres with Docker:
 ```bash
@@ -154,7 +165,8 @@ SPRING_PROFILES_ACTIVE=prod DB_HOST=localhost DB_NAME=workouttracker DB_USERNAME
 ---
 
 ## 💡 Future Improvements
-- Deploy app (AWS / Render / Vercel)
+- Track sets per workout, not just a single entry
+- Allow deleting a logged workout
 - Improve ML model (polynomial regression, more features)
 
 ---
